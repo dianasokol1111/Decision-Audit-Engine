@@ -6,45 +6,60 @@ function runAudit() {
   const gain = Number(document.getElementById("gain").value);
   const unit = document.getElementById("unit").value || "units";
 
+  // Core calculations
   const expectedLoss = potential * probability;
-  const net = gain - (real + expectedLoss);
+  const totalFactualExposure = real + expectedLoss;
+  const netBalance = gain - totalFactualExposure;
 
-  // pressure is a weighting factor, not a cost
+  // Pressure as weighting factor (not cost)
   const pressureWeight = pressureScore / 10;
-
-  const factualExposure = real + expectedLoss;
-  const totalExposure = factualExposure * (1 + pressureWeight);
-
   const pressureIndex =
-    totalExposure === 0 ? 0 : pressureWeight / (1 + pressureWeight);
+    totalFactualExposure === 0
+      ? 0
+      : pressureWeight / (1 + pressureWeight);
 
-  let trigger =
-    "Decision Trigger: MET\nDelay increases measurable exposure.";
+  // Interpretation logic (human, not machine)
+  let conclusion = "";
 
-  if (pressureIndex > 0.6 && net <= 0) {
-    trigger =
-      "Decision Trigger: NOT MET\nUrgency is primarily pressure-driven, not loss-enforced.";
+  if (pressureScore >= 7 && totalFactualExposure >= gain * 0.5) {
+    conclusion =
+      "Your current sense of urgency is high and proportionate to the scale of factual exposure. " +
+      "Material loss is already present, and the pressure you feel reflects real downside risk.";
+  } else if (pressureScore >= 7 && totalFactualExposure < gain * 0.5) {
+    conclusion =
+      "Your sense of urgency is high, but factual exposure is limited relative to the expected upside. " +
+      "Current pressure appears to exceed what is enforced by measurable loss.";
+  } else if (pressureScore < 7 && totalFactualExposure >= gain * 0.5) {
+    conclusion =
+      "Factual exposure is material, but perceived urgency remains moderate. " +
+      "There may be a lag between objective risk and subjective pressure.";
+  } else {
+    conclusion =
+      "Both factual exposure and perceived urgency are currently contained. " +
+      "No dominant pressure signal is enforced by the numbers at this stage.";
   }
 
+  // Executive-style output
   let message = `
-DECISION ARGUMENT SUMMARY
+EXECUTIVE DECISION SNAPSHOT
 
-Real loss: ${real.toFixed(0)} ${unit}
-Expected loss: ${expectedLoss.toFixed(0)} ${unit}
+FACTUAL EXPOSURE
+Confirmed loss: ${real.toFixed(0)} ${unit}
+Expected loss (probability-weighted): ${expectedLoss.toFixed(0)} ${unit}
 
-Pressure proxy (psychological): ${pressureScore} / 10
+Total factual exposure: ${totalFactualExposure.toFixed(0)} ${unit}
 
-Net balance: ${net.toFixed(0)} ${unit}
+PERCEIVED PRESSURE
+Declared pressure level: ${pressureScore} / 10
+(This reflects subjective urgency, not cost.)
 
-Pressure Index: ${(pressureIndex * 100).toFixed(0)}%
+RELATION: FACTS VS PRESSURE
+${conclusion}
 
-${trigger}
+Context note:
+This audit does not predict outcomes. It clarifies whether the urgency you feel is currently enforced by measurable exposure or amplified by narrative and timing pressure.
 
-Decision Integrity Check
-– Pressure-dominant urgency: ${pressureIndex > 0.6 ? "YES" : "NO"}
-– Net balance negative: ${net < 0 ? "YES" : "NO"}
-
-Responsibility remains with the decision-holder.
+Responsibility remains entirely with the decision-holder.
 `;
 
   document.getElementById("result").innerText = message;
