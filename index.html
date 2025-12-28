@@ -2,21 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Decision Audit Engine — Executive Edition</title>
+  <title>Decision Audit Engine™ — Executive Edition</title>
 </head>
 <body>
 
-<h1>Decision Audit Engine — Executive Edition</h1>
+<h1>Decision Audit Engine™ — Executive Edition</h1>
 
 <p>
-Decision Audit Engine is an executive decision analysis tool designed to clarify
-whether perceived urgency is enforced by facts or amplified by narrative and timing pressure.
-</p>
-
-<p>
-It does not make decisions.  
-It does not provide advice.  
-It separates factual exposure from perceived pressure.
+This system does not make decisions.<br>
+It evaluates whether urgency is structurally enforced by facts or amplified by narrative pressure.
 </p>
 
 <p><em>
@@ -25,39 +19,75 @@ Responsibility remains entirely with the decision-holder.
 
 <hr>
 
-<h2>Decision Audit</h2>
+<h2>Decision Record</h2>
 
-<label>Unit of measure (optional):</label><br>
+<label>Decision statement (one sentence)</label><br>
+<input id="statement" type="text" placeholder="e.g. I will delay signing the agreement until March 31."><br><br>
+
+<label>Factual context (optional, descriptive only)</label><br>
+<textarea id="context" placeholder="Brief factual background. No interpretation."></textarea><br><br>
+
+<label>Unit of measure</label><br>
 <select id="unit">
-  <option value="">— abstract unit —</option>
+  <option value="units">Abstract units</option>
   <option value="€">EUR (€)</option>
   <option value="$">USD ($)</option>
   <option value="£">GBP (£)</option>
-  <option value="units">Custom units (resources, points, goods)</option>
 </select>
-<br><br>
 
-<label>Confirmed loss (already incurred or unavoidable):</label><br>
+<hr>
+
+<h2>Loss Profile</h2>
+
+<label>Confirmed loss (already incurred or unavoidable)</label><br>
 <input id="realLoss" type="number"><br><br>
 
-<label>Potential loss if decision is delayed (full scenario magnitude):</label><br>
-<input id="potentialLoss" type="number"><br><br>
+<label>Assumed potential loss (full scenario magnitude)</label><br>
+<input id="assumedLoss" type="number"><br><br>
 
-<label>Projected likelihood of loss (%):</label><br>
-<input id="probability" type="number"><br><br>
+<label>Estimated likelihood of assumed loss (%)</label><br>
+<input id="likelihood" type="number" min="0" max="100"><br><br>
 
-<label>Delay duration (days):</label><br>
+<label>Symbolic / identity-related loss (description only)</label><br>
+<textarea id="symbolicLoss"
+  placeholder="e.g. Being perceived as indecisive, internal identity pressure, reputational narrative."></textarea>
+
+<hr>
+
+<h2>Time Exposure</h2>
+
+<label>Delay or exposure period (days)</label><br>
 <input id="delayDays" type="number"><br><br>
 
-<label>Pressure / urgency level (1–10):</label><br>
-<input id="pressure" type="number"><br><br>
+<hr>
 
-<label>Potential gain if action is taken:</label><br>
-<input id="gain" type="number"><br><br>
+<h2>Pressure Signals</h2>
 
-<button onclick="runAudit()">Generate Decision Snapshot</button>
+<label>Declared urgency level (1–10)</label><br>
+<input id="urgency" type="number" min="1" max="10"><br><br>
+
+<label>Perceived source of pressure (optional)</label><br>
+<textarea id="pressureSource"
+  placeholder="e.g. external deadline, social expectation, internal fear."></textarea>
+
+<hr>
+
+<h2>Identity Narrative (unweighted)</h2>
+
+<label>Internal narrative currently present</label><br>
+<textarea id="identityNarrative"
+  placeholder="Recorded for visibility only. This narrative does not influence calculations."></textarea>
+
+<br><br>
+
+<button onclick="runAudit()">Run Structural Audit</button>
 
 <pre id="result"></pre>
+
+<p style="font-size:12px; opacity:0.7;">
+This system does not predict outcomes.<br>
+This system does not provide recommendations.
+</p>
 
 <script src="script.js"></script>
 
