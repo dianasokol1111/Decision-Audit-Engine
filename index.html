@@ -26,7 +26,28 @@ It identifies whether a numerical commitment trigger is present.
 <p><em>
 Responsibility remains entirely with the decision-holder.
 </em></p>
+<hr>
 
+<h2>Decision Audit</h2>
+
+<label>Real loss (confirmed, €):</label><br>
+<input id="realLoss" type="number"><br><br>
+
+<label>Potential loss (if delayed, €):</label><br>
+<input id="potentialLoss" type="number"><br><br>
+
+<label>Probability of potential loss (%):</label><br>
+<input id="probability" type="number"><br><br>
+
+<label>Pressure proxy (stress / urgency, 1–10):</label><br>
+<input id="pressure" type="number"><br><br>
+
+<label>Potential gain (if action taken, €):</label><br>
+<input id="gain" type="number"><br><br>
+
+<button onclick="runAudit()">Generate Decision Argument</button>
+
+<pre id="result"></pre>
 
   <script src="script.js"></script>
 </body>
