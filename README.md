@@ -1,3 +1,18 @@
-# Decision-Audit-Engine
-Decision Audit Engine is an executive decision analysis tool that converts uncertainty, projected outcomes, and decision pressure into a clear numerical argument. It structures risk and loss across alternative actions, enabling decision-makers to assess exposure before committing capital, reputation, or time.
-This tool provides numerical analysis only. It does not constitute financial, legal, or investment advice. Decision Audit Engine does not make decisions or recommendations. All judgments, actions, and outcomes remain the sole responsibility of the user.
+# Decision Audit Engine™
+
+A non-prescriptive decision clarity system.
+
+This tool does not give advice.
+It examines whether urgency is enforced by time and facts,
+or amplified by narrative pressure.
+
+🔗 Public evaluation version:
+https://dianasokol1111.github.io/Decision-Audit-Engine/
+
+Use cases:
+- High-stakes decisions
+- Timing and delay analysis
+- Situations with psychological or reputational pressure
+
+This is an experimental system.
+It does not predict outcomes or provide recommendations.
