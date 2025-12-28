@@ -1,97 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Decision Audit Engine™</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
-body {
-  font-family: system-ui, sans-serif;
-  background:#0e0e11;
-  color:#f5f5f7;
-  max-width:900px;
-  margin:auto;
-  padding:40px 20px;
-}
-label { display:block; margin-top:20px; }
-input, textarea {
-  width:100%;
-  margin-top:6px;
-  padding:10px;
-  background:#1a1a1f;
-  color:#fff;
-  border:1px solid #2a2a33;
-  border-radius:6px;
-}
-button {
-  margin-top:30px;
-  padding:12px 20px;
-  background:#fff;
-  color:#000;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-pre {
-  background:#141418;
-  padding:20px;
-  margin-top:30px;
-  border-radius:8px;
-}
+  body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0e0e11;
+    color: #f5f5f7;
+    max-width: 900px;
+    margin: auto;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  p {
+    opacity: 0.85;
+    line-height: 1.6;
+  }
+
+  label {
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  input, textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px;
+    background: #1a1a1f;
+    color: #ffffff;
+    border: 1px solid #2a2a33;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  textarea {
+    min-height: 90px;
+  }
+
+  button {
+    margin-top: 40px;
+    padding: 14px 24px;
+    font-size: 15px;
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  #humanReport {
+    margin-top: 40px;
+    padding: 20px;
+    background: #141418;
+    border-radius: 10px;
+  }
+
+  #humanReport h3 {
+    margin-top: 0;
+    font-size: 18px;
+  }
+
+  #humanReport ul {
+    padding-left: 18px;
+  }
+
+  pre {
+    background: #141418;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+
+  .disclaimer {
+    margin-top: 50px;
+    font-size: 12px;
+    opacity: 0.6;
+    border-top: 1px solid #2a2a33;
+    padding-top: 20px;
+  }
 </style>
 </head>
 
 <body>
 
 <h1>Decision Audit Engine™</h1>
-<p>This system does not help you decide.<br>
-It verifies whether urgency is structurally real.</p>
 
-<label>Decision statement</label>
-<input id="statement">
+<p>
+This system does not help you decide.<br>
+It verifies whether urgency is structurally real.
+</p>
 
-<label>Confirmed real loss</label>
-<input id="realLoss" type="number">
+<p style="margin-top:30px; max-width:720px;">
+<strong>Decision Audit Engine™</strong> is a non-prescriptive clarity system
+designed for high-stakes decisions.
+</p>
 
-<label>Assumed potential loss</label>
-<input id="assumedLoss" type="number">
+<p style="max-width:720px;">
+It does not tell you what to do.
+It separates factual exposure from narrative pressure,
+so urgency can be examined rather than obeyed.
+</p>
 
-<label>Likelihood (%)</label>
-<input id="likelihood" type="number">
+<p style="max-width:720px; font-size:14px; opacity:0.75;">
+This system does not optimize decisions.
+It makes pressure visible.
+</p>
 
-<label>Delay (days)</label>
-<input id="delayDays" type="number">
+<p style="margin-top:30px; font-size:14px; opacity:0.8;">
+This is a private test version. Founding access will be offered soon.
+</p>
 
-<label>Urgency (1–10)</label>
-<input id="urgency" type="number">
+<hr style="margin:40px 0; border-color:#2a2a33;">
+
+<label>Decision statement (required, one sentence)</label>
+<input id="statement" placeholder="e.g. I will delay signing the agreement until March 31." />
+
+<label>Factual context (optional, descriptive only)</label>
+<textarea id="context" placeholder="Brief factual background. No interpretation."></textarea>
+
+<label>Measurement unit</label>
+<input id="unit" placeholder="e.g. EUR, USD, units" />
+
+<label>Confirmed real loss (already incurred or unavoidable)</label>
+<input type="number" id="realLoss" />
+
+<label>Assumed potential loss (full scenario magnitude)</label>
+<input type="number" id="assumedLoss" />
+
+<label>Estimated likelihood of assumed loss (%)</label>
+<input type="number" id="likelihood" min="0" max="100" />
+
+<label>Delay or exposure period (days)</label>
+<input type="number" id="delayDays" />
+
+<label>Declared urgency level (1–10)</label>
+<input type="number" id="urgency" min="1" max="10" />
+
+<label>Symbolic / identity-related loss (optional, descriptive)</label>
+<textarea id="symbolicLoss"></textarea>
+
+<label>Perceived source of pressure (optional)</label>
+<textarea id="pressureSource"></textarea>
+
+<label>Identity narrative (recorded, not weighted)</label>
+<textarea id="identityNarrative"></textarea>
 
 <button onclick="runAudit()">Run Structural Audit</button>
 
-<div id="humanReport"></div>
+<div id="humanReport" style="display:none;"></div>
 <pre id="output"></pre>
 
-<script>
-function safe(n){return Number(n)||0;}
+<div class="disclaimer">
+  <p>This system does not predict outcomes.</p>
+  <p>This system does not provide recommendations.</p>
+  <p>Responsibility remains entirely with the decision-holder.</p>
+</div>
 
-function runAudit(){
-  const audit={
-    statement:document.getElementById("statement").value,
-    realLoss:safe(realLoss.value),
-    assumedLoss:safe(assumedLoss.value),
-    likelihood:safe(likelihood.value),
-    delay:Math.max(1,safe(delayDays.value)),
-    urgency:safe(urgency.value)
+<script>
+function safeNumber(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function runAudit() {
+  const statement = document.getElementById("statement").value.trim();
+  if (!statement) {
+    alert("Decision statement is required.");
+    return;
+  }
+
+  const audit = {
+    decision: {
+      statement: statement,
+      context: document.getElementById("context").value || "",
+      unit: document.getElementById("unit").value || "units",
+      created_at: new Date().toISOString()
+    },
+    loss_profile: {
+      real: { amount: safeNumber(realLoss.value) },
+      assumed: {
+        amount: safeNumber(assumedLoss.value),
+        likelihood_percent: safeNumber(likelihood.value)
+      },
+      symbolic: {
+        description: symbolicLoss.value || "",
+        weighted: false
+      }
+    },
+    time_exposure: {},
+    pressure_signals: {},
+    identity_layer: {
+      narrative: identityNarrative.value || "",
+      weighted: false
+    },
+    engine_output: {}
   };
 
-  const perDay=audit.assumedLoss/audit.delay;
-  const riskPerDay=(audit.assumedLoss*(audit.likelihood/100))/audit.delay;
+  const days = Math.max(1, safeNumber(delayDays.value));
+  const urgencyVal = safeNumber(urgency.value);
 
-  document.getElementById("output").textContent=
-    JSON.stringify({audit,perDay,riskPerDay},null,2);
+  const potentialPerDay = audit.loss_profile.assumed.amount / days;
+  const beliefPerDay =
+    (audit.loss_profile.assumed.amount *
+      (audit.loss_profile.assumed.likelihood_percent / 100)) / days;
+
+  audit.time_exposure = {
+    delay_days: days,
+    potential_per_day: potentialPerDay,
+    belief_adjusted_risk_per_day: beliefPerDay
+  };
+
+  let urgencyBand = "LOW";
+  if (urgencyVal >= 7) urgencyBand = "HIGH";
+  else if (urgencyVal >= 4) urgencyBand = "MODERATE";
+
+  audit.pressure_signals = {
+    declared_urgency_level: urgencyVal,
+    urgency_band: urgencyBand,
+    source_note: pressureSource.value || ""
+  };
+
+  let status = "INCONCLUSIVE";
+  if (urgencyBand === "HIGH" && beliefPerDay < potentialPerDay * 0.5) {
+    status = "DISPROPORTIONATE";
+  } else if (urgencyBand === "HIGH") {
+    status = "ALIGNED";
+  }
+
+  audit.engine_output = {
+    structural_alignment: {
+      status: status,
+      note: "This is a structural signal, not a decision or recommendation."
+    }
+  };
+
+  renderHumanReport(audit);
+
+  document.getElementById("output").textContent =
+    JSON.stringify(audit, null, 2);
+}
+
+function renderHumanReport(audit) {
+  const box = document.getElementById("humanReport");
+  box.style.display = "block";
+
+  const u = audit.pressure_signals.declared_urgency_level;
+  const d = audit.time_exposure.delay_days;
+  const w = audit.time_exposure.potential_per_day;
+  const b = audit.time_exposure.belief_adjusted_risk_per_day;
+  const unit = audit.decision.unit;
+  const status = audit.engine_output.structural_alignment.status;
+
+  let headline = "No dominant structural pressure detected.";
+  if (status === "DISPROPORTIONATE") {
+    headline = "Perceived urgency exceeds time-distributed exposure.";
+  } else if (status === "ALIGNED") {
+    headline = "Perceived urgency aligns with time-distributed exposure.";
+  }
+
+  box.innerHTML = `
+    <h3>Structural Decision Snapshot</h3>
+    <ul>
+      <li><strong>Declared urgency:</strong> ${u} / 10</li>
+      <li><strong>Time horizon:</strong> ${d} days</li>
+      <li><strong>Worst-case exposure:</strong> ${w} ${unit} per day</li>
+      <li><strong>Belief-adjusted exposure:</strong> ${b} ${unit} per day</li>
+    </ul>
+    <p><strong>Interpretation</strong></p>
+    <p>${headline}</p>
+    <p style="font-size:12px; opacity:0.7;">
+      Observational output only. No advice is given.
+    </p>
+  `;
 }
 </script>
 
 </body>
 </html>
+
 
