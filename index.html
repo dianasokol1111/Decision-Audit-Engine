@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Decision Audit Engine</title>
+  <title>Decision Audit Engine — Executive Edition</title>
 </head>
 <body>
-  <h1>Decision Audit Engine — Executive Edition</h1>
+
+<h1>Decision Audit Engine — Executive Edition</h1>
 
 <p>
 Decision Audit Engine is an executive decision analysis tool that converts uncertainty,
@@ -26,14 +27,25 @@ It identifies whether a numerical commitment trigger is present.
 <p><em>
 Responsibility remains entirely with the decision-holder.
 </em></p>
+
 <hr>
 
 <h2>Decision Audit</h2>
 
-<label>Real loss (confirmed, €):</label><br>
+<label>Unit of measure (optional):</label><br>
+<select id="unit">
+  <option value="">— abstract unit —</option>
+  <option value="€">EUR (€)</option>
+  <option value="$">USD ($)</option>
+  <option value="£">GBP (£)</option>
+  <option value="units">Custom units (kg, points, resources)</option>
+</select>
+<br><br>
+
+<label>Real loss (confirmed):</label><br>
 <input id="realLoss" type="number"><br><br>
 
-<label>Potential loss (if delayed, €):</label><br>
+<label>Potential loss if delayed:</label><br>
 <input id="potentialLoss" type="number"><br><br>
 
 <label>Probability of potential loss (%):</label><br>
@@ -42,13 +54,14 @@ Responsibility remains entirely with the decision-holder.
 <label>Pressure proxy (stress / urgency, 1–10):</label><br>
 <input id="pressure" type="number"><br><br>
 
-<label>Potential gain (if action taken, €):</label><br>
+<label>Potential gain if action is taken:</label><br>
 <input id="gain" type="number"><br><br>
 
 <button onclick="runAudit()">Generate Decision Argument</button>
 
 <pre id="result"></pre>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
