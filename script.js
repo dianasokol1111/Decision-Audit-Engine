@@ -1,63 +1,64 @@
 function runAudit() {
   const real = Number(document.getElementById("realLoss").value);
   const potential = Number(document.getElementById("potentialLoss").value);
-  const probability = Number(document.getElementById("probability").value) / 100;
-  const pressureScore = Number(document.getElementById("pressure").value); // 1–10
+  const likelihood = Number(document.getElementById("probability").value); // %
+  const delayDays = Number(document.getElementById("delayDays").value);
+  const pressure = Number(document.getElementById("pressure").value); // 1–10
   const gain = Number(document.getElementById("gain").value);
   const unit = document.getElementById("unit").value || "units";
 
-  // Core calculations
-  const expectedLoss = potential * probability;
-  const totalFactualExposure = real + expectedLoss;
-  const netBalance = gain - totalFactualExposure;
+  // Safety
+  const days = delayDays > 0 ? delayDays : 1;
 
-  // Pressure as weighting factor (not cost)
-  const pressureWeight = pressureScore / 10;
-  const pressureIndex =
-    totalFactualExposure === 0
-      ? 0
-      : pressureWeight / (1 + pressureWeight);
+  // Time-distributed exposure (NOT a prediction)
+  const potentialPerDay = potential / days;
+  const perceivedRiskPerDay = (potential * (likelihood / 100)) / days;
 
-  // Interpretation logic (human, not machine)
+  // Qualitative signals
+  const pressureSignal = pressure >= 7 ? "HIGH" : pressure >= 4 ? "MODERATE" : "LOW";
+  const likelihoodSignal = likelihood >= 60 ? "HIGH" : likelihood >= 30 ? "MODERATE" : "LOW";
+
   let conclusion = "";
 
-  if (pressureScore >= 7 && totalFactualExposure >= gain * 0.5) {
+  if (pressureSignal === "HIGH" && perceivedRiskPerDay < gain / days) {
     conclusion =
-      "Your current sense of urgency is high and proportionate to the scale of factual exposure. " +
-      "Material loss is already present, and the pressure you feel reflects real downside risk.";
-  } else if (pressureScore >= 7 && totalFactualExposure < gain * 0.5) {
+      "Declared urgency is high, while projected daily exposure remains limited. " +
+      "Breaking the scenario into daily impact suggests pressure may be amplified by narrative rather than enforced by time-based risk.";
+  } else if (pressureSignal === "HIGH" && perceivedRiskPerDay >= gain / days) {
     conclusion =
-      "Your sense of urgency is high, but factual exposure is limited relative to the expected upside. " +
-      "Current pressure appears to exceed what is enforced by measurable loss.";
-  } else if (pressureScore < 7 && totalFactualExposure >= gain * 0.5) {
-    conclusion =
-      "Factual exposure is material, but perceived urgency remains moderate. " +
-      "There may be a lag between objective risk and subjective pressure.";
+      "Declared urgency aligns with meaningful projected exposure per day. " +
+      "Pressure appears proportionate to the time-distributed risk as currently perceived.";
   } else {
     conclusion =
-      "Both factual exposure and perceived urgency are currently contained. " +
-      "No dominant pressure signal is enforced by the numbers at this stage.";
+      "Time-distributed exposure and perceived urgency remain broadly aligned. " +
+      "No dominant pressure distortion is detected at this stage.";
   }
 
-  // Executive-style output
   let message = `
 EXECUTIVE DECISION SNAPSHOT
 
-FACTUAL EXPOSURE
+FACTUAL BASE
 Confirmed loss: ${real.toFixed(0)} ${unit}
-Expected loss (probability-weighted): ${expectedLoss.toFixed(0)} ${unit}
+Potential loss magnitude (scenario): ${potential.toFixed(0)} ${unit}
 
-Total factual exposure: ${totalFactualExposure.toFixed(0)} ${unit}
+TIME DISTRIBUTION
+Delay period: ${days} days
+Potential exposure per day: ${potentialPerDay.toFixed(2)} ${unit} / day
+
+PROJECTED SCENARIO
+Projected likelihood of loss: ${likelihood}%
+Perceived risk per day (belief-adjusted): ${perceivedRiskPerDay.toFixed(2)} ${unit} / day
 
 PERCEIVED PRESSURE
-Declared pressure level: ${pressureScore} / 10
-(This reflects subjective urgency, not cost.)
+Declared urgency level: ${pressure} / 10
+(This reflects psychological pressure, not cost.)
 
-RELATION: FACTS VS PRESSURE
+INTERPRETATION
 ${conclusion}
 
 Context note:
-This audit does not predict outcomes. It clarifies whether the urgency you feel is currently enforced by measurable exposure or amplified by narrative and timing pressure.
+This audit does not predict outcomes.
+It decomposes perceived risk over time to clarify whether urgency is proportionate to daily exposure or inflated by narrative pressure.
 
 Responsibility remains entirely with the decision-holder.
 `;
