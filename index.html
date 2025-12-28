@@ -9,19 +9,14 @@
 <h1>Decision Audit Engine — Executive Edition</h1>
 
 <p>
-Decision Audit Engine is an executive decision analysis tool that converts uncertainty,
-projected outcomes, and decision pressure into a clear numerical argument.
+Decision Audit Engine is an executive decision analysis tool designed to clarify
+whether perceived urgency is enforced by facts or amplified by narrative and timing pressure.
 </p>
 
 <p>
-It structures risk and loss across alternative actions, enabling decision-makers
-to assess exposure before committing capital, reputation, or time.
-</p>
-
-<p>
-The system does not make decisions.
-It does not provide advice.
-It identifies whether a numerical commitment trigger is present.
+It does not make decisions.  
+It does not provide advice.  
+It separates factual exposure from perceived pressure.
 </p>
 
 <p><em>
@@ -38,26 +33,29 @@ Responsibility remains entirely with the decision-holder.
   <option value="€">EUR (€)</option>
   <option value="$">USD ($)</option>
   <option value="£">GBP (£)</option>
-  <option value="units">Custom units (kg, points, resources)</option>
+  <option value="units">Custom units (resources, points, goods)</option>
 </select>
 <br><br>
 
-<label>Real loss (confirmed):</label><br>
+<label>Confirmed loss (already incurred or unavoidable):</label><br>
 <input id="realLoss" type="number"><br><br>
 
-<label>Potential loss if delayed:</label><br>
+<label>Potential loss if decision is delayed (full scenario magnitude):</label><br>
 <input id="potentialLoss" type="number"><br><br>
 
-<label>Probability of potential loss (%):</label><br>
+<label>Projected likelihood of loss (%):</label><br>
 <input id="probability" type="number"><br><br>
 
-<label>Pressure proxy (stress / urgency, 1–10):</label><br>
+<label>Delay duration (days):</label><br>
+<input id="delayDays" type="number"><br><br>
+
+<label>Pressure / urgency level (1–10):</label><br>
 <input id="pressure" type="number"><br><br>
 
 <label>Potential gain if action is taken:</label><br>
 <input id="gain" type="number"><br><br>
 
-<button onclick="runAudit()">Generate Decision Argument</button>
+<button onclick="runAudit()">Generate Decision Snapshot</button>
 
 <pre id="result"></pre>
 
