@@ -57,7 +57,7 @@ Decision Audit Engine is a paid clarity tool.
 It is designed for situations where fear of loss
 and time pressure begin to narrow perspective.
 
-Access (€59, one-time) includes:
+Access (€59 one-time, VAT calculated at checkout) includes:
 
 live use of the engine
 
