@@ -31,7 +31,7 @@
       opacity: 0.9;
     }
 
-    input {
+    input, select {
       width: 100%;
       margin-top: 6px;
       padding: 10px;
@@ -100,7 +100,12 @@ It helps you see whether urgency comes from time — or from pressure.
 <input id="statement" placeholder="e.g. I will delay signing the agreement until the end of next month." />
 
 <label>Measurement unit</label>
-<input id="unit" placeholder="e.g. EUR, USD" />
+<select id="unit">
+  <option value="EUR">EUR</option>
+  <option value="USD">USD</option>
+  <option value="GBP">GBP</option>
+  <option value="units">Other / units</option>
+</select>
 
 <label>Experienced loss (already incurred, factual)</label>
 <input type="number" id="experiencedLoss" />
@@ -141,8 +146,8 @@ It helps you see whether urgency comes from time — or from pressure.
   <p>This system does not provide recommendations.</p>
 </div>
 
-<script src="audit.js"></script>
+<!-- IMPORTANT: new JS filename to kill cache -->
+<script src="audit-2025-final.js"></script>
 
 </body>
 </html>
-
