@@ -70,18 +70,6 @@
       white-space: pre-wrap;
     }
 
-    #payment {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #2a2a33;
-    }
-
-    a {
-      color: #ffffff;
-      text-decoration: underline;
-      font-size: 15px;
-    }
-
     .disclaimer {
       margin-top: 50px;
       font-size: 12px;
@@ -102,8 +90,8 @@ It helps you see whether urgency comes from time — or from pressure.
 </p>
 
 <p>
-Decision Audit Engine is a non-prescriptive clarity tool for moments when
-fear of loss and time pressure begin to distort judgment.
+This is a financial–psychological clarity tool for moments when
+fear of loss, potential upside, and time pressure begin to distort judgment.
 </p>
 
 <hr style="margin:40px 0; border-color:#2a2a33;">
@@ -112,17 +100,20 @@ fear of loss and time pressure begin to distort judgment.
 
 <p style="font-size:14px; opacity:0.8;">
 Enter the numbers as they feel to you right now.  
-They don’t have to be precise.
+They don’t need to be precise.
 </p>
 
 <label>Decision statement (required)</label>
-<input id="statement" placeholder="e.g. I will delay signing the contract until the end of next month." />
+<input id="statement" placeholder="e.g. I will delay signing the partnership agreement until the end of next month." />
 
 <label>Measurement unit</label>
 <input id="unit" placeholder="e.g. EUR, USD, units" />
 
-<label>Assumed potential loss (full scenario magnitude)</label>
+<label>Potential loss if the decision goes badly</label>
 <input type="number" id="assumedLoss" />
+
+<label>Potential gain if the decision goes well</label>
+<input type="number" id="potentialGain" />
 
 <label>Estimated likelihood of loss (%)</label>
 <input type="number" id="likelihood" min="0" max="100" />
@@ -136,15 +127,6 @@ They don’t have to be precise.
 <button id="runAuditBtn">Check pressure vs time</button>
 
 <div id="humanReport"></div>
-
-<div id="payment">
-  <p style="font-size:14px; opacity:0.85;">
-    Early Access — single decision audit (€59)
-  </p>
-  <a href="https://buy.stripe.com/8x23co4EMb120LObe24c800" target="_blank">
-    Get Early Access
-  </a>
-</div>
 
 <div class="disclaimer">
   <p>This system does not predict outcomes.</p>
@@ -167,67 +149,80 @@ They don’t have to be precise.
     }
 
     const unit = document.getElementById("unit").value || "units";
-    const assumedLoss = num(document.getElementById("assumedLoss").value);
+    const loss = num(document.getElementById("assumedLoss").value);
+    const gain = num(document.getElementById("potentialGain").value);
     const likelihood = num(document.getElementById("likelihood").value);
     const days = Math.max(1, num(document.getElementById("delayDays").value));
     const urgency = num(document.getElementById("urgency").value);
 
-    const worstPerDay = assumedLoss / days;
-    const beliefPerDay = (assumedLoss * (likelihood / 100)) / days;
+    const dailyLoss = (loss * (likelihood / 100)) / days;
 
-    // key variable: perceived exposure
-    const perceivedExposureScore = beliefPerDay * (urgency / 10);
+    /* --- NEW CORE VARIABLE ---
+       Risk–Reward Tension
+       This does NOT recommend risk.
+       It shows how much pressure is created
+       by the relationship between loss, gain, time, and urgency.
+    */
+    const riskRewardTension =
+      (dailyLoss * (urgency / 10)) -
+      (gain > 0 ? gain / days * 0.25 : 0);
 
     let interpretation = "";
 
-    if (perceivedExposureScore < 50) {
+    if (riskRewardTension < 0) {
       interpretation = `
-What this shows:
+What this suggests:
 
-A potential loss exists, but very little is actually changing from day to day.
+While a potential loss exists, the possible upside plays a significant role here.
 
-This suggests that the pressure you feel is driven more by fear of loss
-than by time actively working against you.
+The pressure you feel may be less about time running out
+and more about uncertainty around how the situation could resolve.
 
-From a time perspective, you are not being forced into an immediate reaction.
+This does not mean the decision is safe —
+it means urgency is not being structurally forced by time alone.
       `;
-    } 
-    else if (perceivedExposureScore < 300) {
+    }
+    else if (riskRewardTension < 150) {
       interpretation = `
-What this shows:
+What this suggests:
 
-Time does influence this situation, but it does not sharply escalate it.
+This situation sits in a tension zone.
 
-Delaying the decision carries a cost, but that cost accumulates gradually,
-rather than forcing an immediate response.
+Both potential loss and potential gain matter,
+and time does influence the balance — but not in a way that forces immediate action.
 
-The pressure you feel reflects both time and perception.
+The pressure you feel is understandable,
+yet the situation itself is not collapsing day by day.
       `;
-    } 
+    }
     else {
       interpretation = `
-What this shows:
+What this suggests:
 
-Each additional day creates a meaningful change in your exposure.
+Here, time actively amplifies downside risk
+faster than potential upside can compensate for it.
 
-In this case, time is actively amplifying the potential loss,
-which means the pressure you feel is structurally grounded.
+Each day of delay meaningfully shifts the balance of this decision.
 
-Delaying this decision has a real and increasing day-by-day cost.
+In this case, urgency is not only psychological —
+it reflects a real change in exposure over time.
       `;
     }
 
     const report = `
 Structural Snapshot
 
-Daily worst-case change:
-${worstPerDay.toFixed(2)} ${unit} per day
+Estimated daily downside (likelihood-adjusted):
+${dailyLoss.toFixed(2)} ${unit} per day
 
-Daily change adjusted for likelihood:
-${beliefPerDay.toFixed(2)} ${unit} per day
+Potential upside (if things go well):
+${gain.toFixed(2)} ${unit}
 
 Declared urgency:
 ${urgency} / 10
+
+Risk–reward tension:
+${riskRewardTension.toFixed(2)}
 
 ${interpretation.trim()}
     `;
@@ -237,7 +232,8 @@ ${interpretation.trim()}
     out.textContent = report;
   }
 
-  document.getElementById("runAuditBtn")
+  document
+    .getElementById("runAuditBtn")
     .addEventListener("click", runAudit);
 
 })();
