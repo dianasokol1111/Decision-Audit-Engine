@@ -1,54 +1,73 @@
-# Decision Audit Engine™
+Decision Audit Engine™
 
 Decision Audit Engine helps you pause before reacting to pressure.
 
-It shows whether the urgency you feel is caused by time —  
-or by fear of loss.
+It shows whether the urgency you feel is driven by time —
+or by the fear of further loss.
 
-This is not a decision-making tool.  
-It is a clarity tool for moments of high-stakes uncertainty.
+This is not a decision-making tool.
+It does not tell you what to do.
 
-👉 **Paid access (€59)** — purchase link below in the *Access* section.
+It is a clarity tool for moments when pressure begins to distort judgment.
 
----
+What this tool is for
 
-## Who this is for
+This tool is for moments when a decision feels urgent —
+but it is not clear why.
 
-- Founders facing high-pressure decisions  
-- Executives under time constraints  
-- Investors weighing delayed vs immediate action  
-- Anyone who feels forced to decide “now” without clarity  
+When:
 
----
+time pressure is real, but hard to quantify
 
-## What this tool does
+previous losses make the stakes feel heavier
 
-Decision Audit Engine examines the relationship between:
+acting “now” feels safer than waiting, even without clarity
 
-- perceived potential loss  
-- time remaining  
-- the pressure you feel to act  
+Decision Audit Engine helps you separate what is structurally changing
+from what is psychologically amplifying pressure.
 
-It helps separate **structural urgency** from **psychological pressure**.
+What the engine examines
 
-This system does not predict outcomes.  
-It does not provide recommendations.
+The engine looks at the interaction between:
 
----
+potential downside
 
-## Access
+time remaining
 
-Decision Audit Engine is not a free calculator.
+declared urgency
 
-It is a paid clarity tool designed for moments when fear of loss  
-and time pressure begin to distort judgment.
+It translates these inputs into a clear, human-readable note
+that explains how time and pressure are actually interacting
+in this situation.
 
-**Early access (€59) includes:**
-- live use of the engine  
-- full dynamic interpretation  
-- unlimited single-decision audits  
+What this tool does not do
 
-👉 **Purchase access here:**  
-https://buy.stripe.com/8x23co4EMb120LObe24c800  
+It does not predict outcomes
+
+It does not provide recommendations
+
+It does not replace judgment
+
+It helps you see the structure you are already inside.
+
+Access
+
+Decision Audit Engine is a paid clarity tool.
+
+It is designed for situations where fear of loss
+and time pressure begin to narrow perspective.
+
+Access (€59, one-time) includes:
+
+live use of the engine
+
+full dynamic interpretation in plain language
+
+unlimited single-decision audits
+
+👉 Purchase access here:
+Stripe link: https://buy.stripe.com/8x23co4EMb120LObe24c800
 
 Access instructions are provided immediately after purchase.
+
+
