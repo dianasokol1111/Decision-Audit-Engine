@@ -15,14 +15,28 @@
       padding: 40px 20px;
     }
 
-    h1 { font-size: 28px; margin-bottom: 10px; }
-    h2 { font-size: 18px; margin-top: 40px; }
-    p { line-height: 1.6; opacity: 0.85; }
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-top: 40px;
+    }
+
+    p {
+      line-height: 1.6;
+      opacity: 0.85;
+      max-width: 720px;
+    }
 
     label {
       display: block;
-      margin-top: 20px;
+      margin-top: 22px;
       font-size: 14px;
+      opacity: 0.9;
     }
 
     input {
@@ -49,10 +63,23 @@
 
     #humanReport {
       margin-top: 40px;
-      padding: 24px;
+      padding: 22px;
       background: #141418;
       border-radius: 10px;
       display: none;
+      white-space: pre-wrap;
+    }
+
+    #payment {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #2a2a33;
+    }
+
+    a {
+      color: #ffffff;
+      text-decoration: underline;
+      font-size: 15px;
     }
 
     .disclaimer {
@@ -74,39 +101,148 @@ This system does not help you decide.<br>
 It helps you see whether urgency comes from time — or from pressure.
 </p>
 
+<p>
+Decision Audit Engine is a non-prescriptive clarity tool for moments when
+fear of loss and time pressure begin to distort judgment.
+</p>
+
 <hr style="margin:40px 0; border-color:#2a2a33;">
 
 <h2>Decision Record</h2>
 
+<p style="font-size:14px; opacity:0.8;">
+Enter the numbers as they feel to you right now.  
+They don’t have to be precise.
+</p>
+
 <label>Decision statement (required)</label>
-<input id="statement" placeholder="e.g. I will delay signing until March 31." />
+<input id="statement" placeholder="e.g. I will delay signing the contract until the end of next month." />
 
 <label>Measurement unit</label>
 <input id="unit" placeholder="e.g. EUR, USD, units" />
 
 <label>Assumed potential loss (full scenario magnitude)</label>
-<input id="assumedLoss" type="number" />
+<input type="number" id="assumedLoss" />
 
 <label>Estimated likelihood of loss (%)</label>
-<input id="likelihood" type="number" min="0" max="100" />
+<input type="number" id="likelihood" min="0" max="100" />
 
 <label>Delay or exposure period (days)</label>
-<input id="delayDays" type="number" />
+<input type="number" id="delayDays" />
 
 <label>Declared urgency level (1–10)</label>
-<input id="urgency" type="number" min="1" max="10" />
+<input type="number" id="urgency" min="1" max="10" />
 
-<button id="runAuditBtn">Run Structural Audit</button>
+<button id="runAuditBtn">Check pressure vs time</button>
 
 <div id="humanReport"></div>
+
+<div id="payment">
+  <p style="font-size:14px; opacity:0.85;">
+    Early Access — single decision audit (€59)
+  </p>
+  <a href="https://buy.stripe.com/8x23co4EMb120LObe24c800" target="_blank">
+    Get Early Access
+  </a>
+</div>
 
 <div class="disclaimer">
   <p>This system does not predict outcomes.</p>
   <p>This system does not provide recommendations.</p>
 </div>
 
-<script src="script.js"></script>
+<script>
+(function () {
+
+  function num(v) {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function runAudit() {
+    const statement = document.getElementById("statement").value.trim();
+    if (!statement) {
+      alert("Decision statement is required.");
+      return;
+    }
+
+    const unit = document.getElementById("unit").value || "units";
+    const assumedLoss = num(document.getElementById("assumedLoss").value);
+    const likelihood = num(document.getElementById("likelihood").value);
+    const days = Math.max(1, num(document.getElementById("delayDays").value));
+    const urgency = num(document.getElementById("urgency").value);
+
+    const worstPerDay = assumedLoss / days;
+    const beliefPerDay = (assumedLoss * (likelihood / 100)) / days;
+
+    // key variable: perceived exposure
+    const perceivedExposureScore = beliefPerDay * (urgency / 10);
+
+    let interpretation = "";
+
+    if (perceivedExposureScore < 50) {
+      interpretation = `
+What this shows:
+
+A potential loss exists, but very little is actually changing from day to day.
+
+This suggests that the pressure you feel is driven more by fear of loss
+than by time actively working against you.
+
+From a time perspective, you are not being forced into an immediate reaction.
+      `;
+    } 
+    else if (perceivedExposureScore < 300) {
+      interpretation = `
+What this shows:
+
+Time does influence this situation, but it does not sharply escalate it.
+
+Delaying the decision carries a cost, but that cost accumulates gradually,
+rather than forcing an immediate response.
+
+The pressure you feel reflects both time and perception.
+      `;
+    } 
+    else {
+      interpretation = `
+What this shows:
+
+Each additional day creates a meaningful change in your exposure.
+
+In this case, time is actively amplifying the potential loss,
+which means the pressure you feel is structurally grounded.
+
+Delaying this decision has a real and increasing day-by-day cost.
+      `;
+    }
+
+    const report = `
+Structural Snapshot
+
+Daily worst-case change:
+${worstPerDay.toFixed(2)} ${unit} per day
+
+Daily change adjusted for likelihood:
+${beliefPerDay.toFixed(2)} ${unit} per day
+
+Declared urgency:
+${urgency} / 10
+
+${interpretation.trim()}
+    `;
+
+    const out = document.getElementById("humanReport");
+    out.style.display = "block";
+    out.textContent = report;
+  }
+
+  document.getElementById("runAuditBtn")
+    .addEventListener("click", runAudit);
+
+})();
+</script>
+
 </body>
 </html>
-
 
