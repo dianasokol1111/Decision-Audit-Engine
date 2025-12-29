@@ -1,69 +1,149 @@
-<script>
-(function () {
-  function num(v) {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : 0;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Decision Audit Engine™</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  function runAudit() {
-    const statementEl = document.getElementById("statement");
-    if (!statementEl || !statementEl.value.trim()) {
-      alert("Decision statement is required.");
-      return;
+  <style>
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0e0e11;
+      color: #f5f5f7;
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 20px;
     }
 
-    const unit = document.getElementById("unit")?.value || "units";
-    const assumed = num(document.getElementById("assumedLoss")?.value);
-    const likelihood = num(document.getElementById("likelihood")?.value);
-    const days = Math.max(1, num(document.getElementById("delayDays")?.value));
-    const urgency = num(document.getElementById("urgency")?.value);
-
-    const perDay = assumed / days;
-    const beliefPerDay = (assumed * (likelihood / 100)) / days;
-
-    let status = "INCONCLUSIVE";
-    if (urgency >= 7 && beliefPerDay < perDay * 0.5) {
-      status = "DISPROPORTIONATE";
-    } else if (urgency >= 7) {
-      status = "ALIGNED";
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
     }
 
-    const report = `
-Structural Snapshot
-
-Urgency: ${urgency} / 10
-Time horizon: ${days} days
-Worst-case exposure: ${perDay.toFixed(2)} ${unit} / day
-Belief-adjusted exposure: ${beliefPerDay.toFixed(2)} ${unit} / day
-
-Result: ${status}
-    `.trim();
-
-    const out = document.getElementById("humanReport");
-    if (!out) {
-      alert("Internal error: output container missing.");
-      return;
+    h2 {
+      font-size: 18px;
+      margin-top: 40px;
     }
 
-    out.style.display = "block";
-    out.innerText = report;
-  }
-
-  // HARD BIND — odporne na GitHub Pages, cache, wszystko
-  document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("runAuditBtn");
-    if (btn) {
-      btn.addEventListener("click", runAudit);
-      btn.onclick = runAudit;
-    } else {
-      console.error("Run Audit button not found");
+    p {
+      line-height: 1.6;
+      opacity: 0.85;
     }
-  });
 
-  // GLOBAL FALLBACK (na wszelki wypadek)
-  window.runAudit = runAudit;
-})();
-</script>
+    label {
+      display: block;
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 6px;
+      padding: 10px;
+      background: #1a1a1f;
+      color: #fff;
+      border: 1px solid #2a2a33;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 14px 24px;
+      font-size: 15px;
+      background: #ffffff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #humanReport {
+      margin-top: 40px;
+      padding: 20px;
+      background: #141418;
+      border-radius: 10px;
+      white-space: pre-line;
+      display: none;
+    }
+
+    .disclaimer {
+      margin-top: 50px;
+      font-size: 12px;
+      opacity: 0.6;
+      border-top: 1px solid #2a2a33;
+      padding-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Decision Audit Engine™</h1>
+
+<p>
+This system does not help you decide.<br>
+It verifies whether urgency is structurally real.
+</p>
+
+<p style="margin-top:30px; max-width:720px;">
+<strong>Decision Audit Engine™</strong> is a non-prescriptive clarity system
+for examining high-stakes decisions.
+</p>
+
+<p style="max-width:720px;">
+It separates factual exposure from narrative pressure,
+so urgency can be examined rather than obeyed.
+</p>
+
+<hr style="margin:40px 0; border-color:#2a2a33;">
+
+<h2>Decision Record</h2>
+
+<label>Decision statement (required)</label>
+<input id="statement" placeholder="e.g. I will delay signing until March 31." />
+
+<label>Measurement unit</label>
+<input id="unit" placeholder="e.g. EUR, USD, units" />
+
+<label>Assumed potential loss (full scenario magnitude)</label>
+<input id="assumedLoss" type="number" />
+
+<label>Estimated likelihood of loss (%)</label>
+<input id="likelihood" type="number" min="0" max="100" />
+
+<label>Delay or exposure period (days)</label>
+<input id="delayDays" type="number" />
+
+<label>Declared urgency level (1–10)</label>
+<input id="urgency" type="number" min="1" max="10" />
+
+<button id="runAuditBtn">Run Structural Audit</button>
+
+<p style="margin-top:20px; font-size:14px; opacity:0.8;">
+Early Access available (€59)
+</p>
+
+<a href="https://buy.stripe.com/8x23co4EMb120LObe24c800"
+   target="_blank"
+   style="font-size:15px; text-decoration:underline;">
+Get Early Access
+</a>
+
+<div id="humanReport"></div>
+
+<div class="disclaimer">
+  <p>This system does not predict outcomes.</p>
+  <p>This system does not provide recommendations.</p>
+</div>
+
+<!-- 🔑 JEDYNE ŹRÓDŁO JAVASCRIPT -->
+<script src="script.js"></script>
+
+</body>
+</html>
 
 
 
