@@ -15,30 +15,17 @@
       padding: 40px 20px;
     }
 
-    h1 {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    h2 {
-      font-size: 18px;
-      margin-top: 40px;
-    }
-
-    p {
-      line-height: 1.6;
-      opacity: 0.85;
-    }
+    h1 { font-size: 28px; margin-bottom: 10px; }
+    h2 { font-size: 18px; margin-top: 40px; }
+    p { line-height: 1.6; opacity: 0.85; }
 
     label {
       display: block;
       margin-top: 20px;
       font-size: 14px;
-      opacity: 0.9;
     }
 
-    input, textarea {
+    input {
       width: 100%;
       margin-top: 6px;
       padding: 10px;
@@ -47,10 +34,6 @@
       border: 1px solid #2a2a33;
       border-radius: 6px;
       font-size: 14px;
-    }
-
-    textarea {
-      min-height: 90px;
     }
 
     button {
@@ -69,17 +52,7 @@
       padding: 20px;
       background: #141418;
       border-radius: 10px;
-      display: none;
-    }
-
-    pre {
-      background: #141418;
-      padding: 20px;
-      margin-top: 30px;
-      border-radius: 10px;
-      font-size: 13px;
-      overflow-x: auto;
-      opacity: 0.8;
+      white-space: pre-line;
     }
 
     .disclaimer {
@@ -94,26 +67,12 @@
 
 <body>
 
-
-
 <h1>Decision Audit Engine™</h1>
 
 <p>
 This system does not help you decide.<br>
 It verifies whether urgency is structurally real.
 </p>
-
-<p style="margin-top:30px; max-width:720px;">
-<strong>Decision Audit Engine™</strong> is a non-prescriptive clarity system
-for examining high-stakes decisions.
-</p>
-
-<p style="max-width:720px;">
-It separates factual exposure from narrative pressure,
-so urgency can be examined rather than obeyed.
-</p>
-
-<hr style="margin:40px 0; border-color:#2a2a33;">
 
 <h2>Decision Record</h2>
 
@@ -124,29 +83,30 @@ so urgency can be examined rather than obeyed.
 <input id="unit" placeholder="e.g. EUR, USD, units" />
 
 <label>Assumed potential loss (full scenario magnitude)</label>
-<input type="number" id="assumedLoss" />
+<input id="assumedLoss" type="number" />
 
 <label>Estimated likelihood of loss (%)</label>
-<input type="number" id="likelihood" min="0" max="100" />
+<input id="likelihood" type="number" min="0" max="100" />
 
 <label>Delay or exposure period (days)</label>
-<input type="number" id="delayDays" />
+<input id="delayDays" type="number" />
 
 <label>Declared urgency level (1–10)</label>
-<input type="number" id="urgency" min="1" max="10" />
+<input id="urgency" type="number" min="1" max="10" />
 
 <button id="runAuditBtn">Run Structural Audit</button>
+
 <p style="margin-top:20px; font-size:14px; opacity:0.8;">
-  Early Access available (€59)
+Early Access available (€59)
 </p>
 
 <a href="https://buy.stripe.com/8x23co4EMb120LObe24c800"
    target="_blank"
    style="font-size:15px; text-decoration:underline;">
-  Get Early Access
+Get Early Access
 </a>
+
 <div id="humanReport"></div>
-<pre id="output"></pre>
 
 <div class="disclaimer">
   <p>This system does not predict outcomes.</p>
@@ -154,11 +114,6 @@ so urgency can be examined rather than obeyed.
 </div>
 
 <script>
-function num(v) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : 0;
-}
-
 function runAudit() {
   const statement = document.getElementById("statement").value.trim();
   if (!statement) {
@@ -167,38 +122,34 @@ function runAudit() {
   }
 
   const unit = document.getElementById("unit").value || "units";
-  const assumed = num(assumedLoss.value);
-  const likelihood = num(likelihood.value);
-  const days = Math.max(1, num(delayDays.value));
-  const urgency = num(urgency.value);
+  const assumed = Number(document.getElementById("assumedLoss").value || 0);
+  const likelihood = Number(document.getElementById("likelihood").value || 0);
+  const days = Math.max(1, Number(document.getElementById("delayDays").value || 1));
+  const urgency = Number(document.getElementById("urgency").value || 0);
 
   const perDay = assumed / days;
   const beliefPerDay = (assumed * (likelihood / 100)) / days;
 
   let status = "INCONCLUSIVE";
-  if (urgency >= 7 && beliefPerDay < perDay * 0.5) status = "DISPROPORTIONATE";
-  else if (urgency >= 7) status = "ALIGNED";
+  if (urgency >= 7 && beliefPerDay < perDay * 0.5) {
+    status = "DISPROPORTIONATE";
+  } else if (urgency >= 7) {
+    status = "ALIGNED";
+  }
 
-  const audit = {
-    decision: { statement, unit },
-    time_exposure: { days, perDay, beliefPerDay },
-    urgency,
-    status
-  };
+  document.getElementById("humanReport").textContent = `
+Structural Snapshot
 
-  document.getElementById("humanReport").style.display = "block";
-  document.getElementById("humanReport").innerHTML = `
-    <h3>Structural Snapshot</h3>
-    <p><strong>Urgency:</strong> ${urgency} / 10</p>
-    <p><strong>Time horizon:</strong> ${days} days</p>
-    <p><strong>Worst-case exposure:</strong> ${perDay} ${unit} / day</p>
-    <p><strong>Belief-adjusted exposure:</strong> ${beliefPerDay} ${unit} / day</p>
-    <p><strong>Result:</strong> ${status}</p>
-  `;
+Urgency: ${urgency} / 10
+Time horizon: ${days} days
+Worst-case exposure: ${perDay.toFixed(2)} ${unit} / day
+Belief-adjusted exposure: ${beliefPerDay.toFixed(2)} ${unit} / day
 
-  document.getElementById("output").textContent =
-    JSON.stringify(audit, null, 2);
+Result: ${status}
+`;
 }
+
+document.getElementById("runAuditBtn").addEventListener("click", runAudit);
 </script>
 
 </body>
