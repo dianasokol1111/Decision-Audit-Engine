@@ -1,4 +1,5 @@
 (function () {
+
   function num(v) {
     const n = Number(v);
     return Number.isFinite(n) ? n : 0;
@@ -6,66 +7,71 @@
 
   function runAudit() {
     // --- REQUIRED INPUT ---
-    const statement = document.getElementById("statement").value.trim();
-    if (!statement) {
+    const statementEl = document.getElementById("statement");
+    if (!statementEl || !statementEl.value.trim()) {
       alert("Decision statement is required.");
       return;
     }
 
-    // --- INPUTS ---
+    // --- USER INPUTS (ALL PERCEIVED, NOT FACTS) ---
     const unit = document.getElementById("unit").value || "units";
-    const assumed = num(document.getElementById("assumedLoss").value);
+    const assumedLoss = num(document.getElementById("assumedLoss").value);
     const likelihood = num(document.getElementById("likelihood").value);
     const days = Math.max(1, num(document.getElementById("delayDays").value));
     const urgency = num(document.getElementById("urgency").value);
 
-    // --- CORE CALCULATIONS ---
-    const worstPerDay = assumed / days;
-    const beliefPerDay = (assumed * (likelihood / 100)) / days;
+    // --- CORE NUMERIC STRUCTURE ---
+    const worstPerDay = assumedLoss / days;
+    const beliefPerDay = (assumedLoss * (likelihood / 100)) / days;
 
-    // How much of the total scenario changes per day (ratio)
-    const dailyImpactRatio = assumed > 0 ? beliefPerDay / assumed : 0;
+    // --- KEY VARIABLE: PERCEIVED EXPOSURE ---
+    // combines daily loss + psychological pressure
+    const perceivedExposureScore = beliefPerDay * (urgency / 10);
 
-    // --- HUMAN INTERPRETATION ---
+    // --- HUMAN INTERPRETATION (DYNAMIC) ---
     let interpretation = "";
 
-    // 🟢 Scenario 1: Time barely matters
-    if (dailyImpactRatio < 0.01) {
+    if (perceivedExposureScore < 50) {
+      // 🟢 Low structural pressure
       interpretation = `
-What this suggests:
+What this shows:
 
-Based on the numbers you entered, delaying this decision does not meaningfully change your situation from day to day.
+A potential loss exists, but very little is actually changing from day to day.
 
-This means the pressure you may be feeling is unlikely to come from time itself.
-You appear to have space to slow down and think, without your position worsening each day.
+This means the pressure you feel is likely being driven more by the fear of loss
+than by time actively working against you.
+
+From a time perspective, you are not being forced into an immediate reaction.
       `;
     }
-
-    // 🟡 Scenario 2: Time matters, but gradually
-    else if (dailyImpactRatio < 0.05) {
+    else if (perceivedExposureScore < 300) {
+      // 🟡 Moderate, mixed pressure
       interpretation = `
-What this suggests:
+What this shows:
 
-Time does have an effect here, but it builds up gradually rather than urgently.
+Time does have an effect on this situation, but it does not escalate sharply.
 
-Delaying this decision has a cost, but that cost accumulates over time,
-rather than sharply increasing from one day to the next.
+Delaying this decision carries a cost, but that cost accumulates gradually
+rather than forcing an immediate response.
+
+The pressure you feel is partly grounded in time, and partly amplified by perception.
       `;
     }
-
-    // 🔴 Scenario 3: Time clearly worsens the situation
     else {
+      // 🔴 High structural pressure
       interpretation = `
-What this suggests:
+What this shows:
 
-Time is a meaningful factor in this decision.
+Each additional day creates a meaningful change in your exposure.
 
-Each additional day creates a noticeable change in your exposure,
-which means delaying this decision carries a real and increasing cost.
+In this case, time is actively amplifying the potential loss,
+which means the pressure you feel is not just emotional or imagined.
+
+Delaying this decision has a real and increasing day-by-day cost.
       `;
     }
 
-    // --- FINAL REPORT (HUMAN-READABLE) ---
+    // --- FINAL HUMAN-READABLE REPORT ---
     const report = `
 Structural Snapshot
 
@@ -96,6 +102,7 @@ ${interpretation.trim()}
       console.error("Run Structural Audit button not found.");
     }
   });
+
 })();
 
 
