@@ -1,18 +1,22 @@
 # Decision Audit Engine™
 
-A non-prescriptive decision clarity system.
+Decision Audit Engine helps you pause before reacting to pressure.
 
-This tool does not give advice.
-It examines whether urgency is enforced by time and facts,
-or amplified by narrative pressure.
+It shows whether the urgency you feel is caused by time —  
+or by fear of loss.
 
-🔗 Public evaluation version:
-https://dianasokol1111.github.io/Decision-Audit-Engine/
+This is not a decision-making tool.
+It is a clarity tool for moments of high-stakes uncertainty.
 
-Use cases:
-- High-stakes decisions
-- Timing and delay analysis
-- Situations with psychological or reputational pressure
+## Who this is for
 
+- Founders facing high-pressure decisions
+- Executives under time constraints
+- Investors weighing delayed vs immediate action
+- Anyone who feels forced to decide “now” without clarity
 This is an experimental system.
 It does not predict outcomes or provide recommendations.
+Early access (€59) includes:
+- live use of the engine
+- full dynamic interpretation
+- unlimited single-decision audits
