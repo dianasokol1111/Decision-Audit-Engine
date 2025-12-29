@@ -53,13 +53,24 @@
       cursor: pointer;
     }
 
-    #humanReport {
+    .output {
       margin-top: 40px;
-      padding: 22px;
+      padding: 26px;
       background: #141418;
-      border-radius: 10px;
-      white-space: pre-wrap;
+      border-radius: 12px;
       display: none;
+    }
+
+    .section {
+      margin-top: 22px;
+      white-space: pre-wrap;
+    }
+
+    .section-title {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      opacity: 0.6;
+      margin-bottom: 10px;
     }
 
     .disclaimer {
@@ -89,7 +100,7 @@ It helps you see whether urgency comes from time — or from pressure.
 <input id="statement" placeholder="e.g. I will delay signing the agreement until the end of next month." />
 
 <label>Measurement unit</label>
-<input id="unit" placeholder="e.g. EUR, USD, units" />
+<input id="unit" placeholder="e.g. EUR, USD" />
 
 <label>Experienced loss (already incurred, factual)</label>
 <input type="number" id="experiencedLoss" />
@@ -111,119 +122,27 @@ It helps you see whether urgency comes from time — or from pressure.
 
 <button id="runAuditBtn">Run structural audit</button>
 
-<div id="humanReport"></div>
+<div class="output" id="output">
+
+  <div class="section">
+    <div class="section-title">STRUCTURAL SNAPSHOT</div>
+    <div id="snapshot"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">DECISION NOTE</div>
+    <div id="decisionNote"></div>
+  </div>
+
+</div>
 
 <div class="disclaimer">
   <p>This system does not predict outcomes.</p>
   <p>This system does not provide recommendations.</p>
 </div>
 
-<script>
-(function () {
-
-  const num = v => Number.isFinite(+v) ? +v : 0;
-
-  function runAudit() {
-
-    const statement = statementInput.value.trim();
-    if (!statement) {
-      alert("Decision statement is required.");
-      return;
-    }
-
-    const unit = unitInput.value || "units";
-    const experienced = num(experiencedLoss.value);
-    const potentialLoss = num(potentialLossInput.value);
-    const potentialGain = num(potentialGainInput.value);
-    const likelihood = num(likelihoodInput.value) / 100;
-    const days = Math.max(1, num(daysInput.value));
-    const urgency = num(urgencyInput.value);
-
-    const expectedDailyLoss = (potentialLoss * likelihood) / days;
-    const dailyGain = potentialGain / days;
-
-    // --- CORE VARIABLE ---
-    const riskRewardTension =
-      (expectedDailyLoss - dailyGain) * (urgency / 10);
-
-    let narrative = "";
-
-    if (experienced > 0 && potentialLoss === 0) {
-      narrative = `
-You are reacting to a loss that has already happened.
-
-There is no additional downside accumulating with time.
-Urgency here is likely driven by the emotional weight of the past loss,
-not by current exposure.
-      `;
-    }
-    else if (riskRewardTension > 0 && expectedDailyLoss > dailyGain) {
-      narrative = `
-Time is actively increasing downside exposure faster than upside can compensate.
-
-Each additional day shifts the balance against you.
-In this case, urgency is structurally grounded in how the situation evolves over time.
-      `;
-    }
-    else if (riskRewardTension < 0 && dailyGain > expectedDailyLoss) {
-      narrative = `
-The potential upside offsets the expected downside on a daily basis.
-
-Pressure may feel intense, but it is not being enforced by time itself.
-This suggests fear of loss or uncertainty may be amplifying urgency.
-      `;
-    }
-    else {
-      narrative = `
-This situation sits in a balanced zone.
-
-Neither loss nor gain dominates on a daily basis.
-Urgency is understandable, but not structurally forced by time.
-      `;
-    }
-
-    const report = `
-STRUCTURAL SNAPSHOT
-
-Experienced loss (fact):
-${experienced.toFixed(2)} ${unit}
-
-Expected daily downside:
-${expectedDailyLoss.toFixed(2)} ${unit} per day
-
-Potential daily upside:
-${dailyGain.toFixed(2)} ${unit} per day
-
-Declared urgency:
-${urgency} / 10
-
-Risk–reward tension:
-${riskRewardTension.toFixed(2)}
-
-${narrative.trim()}
-    `;
-
-    humanReport.style.display = "block";
-    humanReport.textContent = report;
-  }
-
-  // Bind elements
-  const statementInput = document.getElementById("statement");
-  const unitInput = document.getElementById("unit");
-  const experiencedLoss = document.getElementById("experiencedLoss");
-  const potentialLossInput = document.getElementById("potentialLoss");
-  const potentialGainInput = document.getElementById("potentialGain");
-  const likelihoodInput = document.getElementById("likelihood");
-  const daysInput = document.getElementById("days");
-  const urgencyInput = document.getElementById("urgency");
-  const humanReport = document.getElementById("humanReport");
-
-  document
-    .getElementById("runAuditBtn")
-    .addEventListener("click", runAudit);
-
-})();
-</script>
+<script src="audit.js"></script>
 
 </body>
 </html>
+
