@@ -15,16 +15,8 @@
       padding: 40px 20px;
     }
 
-    h1 {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    h2 {
-      font-size: 18px;
-      margin-top: 40px;
-    }
+    h1 { font-size: 28px; font-weight: 600; }
+    h2 { font-size: 18px; margin-top: 40px; }
 
     p {
       line-height: 1.6;
@@ -66,8 +58,8 @@
       padding: 22px;
       background: #141418;
       border-radius: 10px;
-      display: none;
       white-space: pre-wrap;
+      display: none;
     }
 
     .disclaimer {
@@ -89,42 +81,35 @@ This system does not help you decide.<br>
 It helps you see whether urgency comes from time — or from pressure.
 </p>
 
-<p>
-This is a financial–psychological clarity tool for moments when
-fear of loss, potential upside, and time pressure begin to distort judgment.
-</p>
-
 <hr style="margin:40px 0; border-color:#2a2a33;">
 
 <h2>Decision Record</h2>
 
-<p style="font-size:14px; opacity:0.8;">
-Enter the numbers as they feel to you right now.  
-They don’t need to be precise.
-</p>
-
 <label>Decision statement (required)</label>
-<input id="statement" placeholder="e.g. I will delay signing the partnership agreement until the end of next month." />
+<input id="statement" placeholder="e.g. I will delay signing the agreement until the end of next month." />
 
 <label>Measurement unit</label>
 <input id="unit" placeholder="e.g. EUR, USD, units" />
 
-<label>Potential loss if the decision goes badly</label>
-<input type="number" id="assumedLoss" />
+<label>Experienced loss (already incurred, factual)</label>
+<input type="number" id="experiencedLoss" />
 
-<label>Potential gain if the decision goes well</label>
+<label>Potential loss if things go badly</label>
+<input type="number" id="potentialLoss" />
+
+<label>Potential gain if things go well</label>
 <input type="number" id="potentialGain" />
 
 <label>Estimated likelihood of loss (%)</label>
 <input type="number" id="likelihood" min="0" max="100" />
 
 <label>Delay or exposure period (days)</label>
-<input type="number" id="delayDays" />
+<input type="number" id="days" />
 
 <label>Declared urgency level (1–10)</label>
 <input type="number" id="urgency" min="1" max="10" />
 
-<button id="runAuditBtn">Check pressure vs time</button>
+<button id="runAuditBtn">Run structural audit</button>
 
 <div id="humanReport"></div>
 
@@ -136,87 +121,78 @@ They don’t need to be precise.
 <script>
 (function () {
 
-  function num(v) {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : 0;
-  }
+  const num = v => Number.isFinite(+v) ? +v : 0;
 
   function runAudit() {
-    const statement = document.getElementById("statement").value.trim();
+
+    const statement = statementInput.value.trim();
     if (!statement) {
       alert("Decision statement is required.");
       return;
     }
 
-    const unit = document.getElementById("unit").value || "units";
-    const loss = num(document.getElementById("assumedLoss").value);
-    const gain = num(document.getElementById("potentialGain").value);
-    const likelihood = num(document.getElementById("likelihood").value);
-    const days = Math.max(1, num(document.getElementById("delayDays").value));
-    const urgency = num(document.getElementById("urgency").value);
+    const unit = unitInput.value || "units";
+    const experienced = num(experiencedLoss.value);
+    const potentialLoss = num(potentialLossInput.value);
+    const potentialGain = num(potentialGainInput.value);
+    const likelihood = num(likelihoodInput.value) / 100;
+    const days = Math.max(1, num(daysInput.value));
+    const urgency = num(urgencyInput.value);
 
-    const dailyLoss = (loss * (likelihood / 100)) / days;
+    const expectedDailyLoss = (potentialLoss * likelihood) / days;
+    const dailyGain = potentialGain / days;
 
-    /* --- NEW CORE VARIABLE ---
-       Risk–Reward Tension
-       This does NOT recommend risk.
-       It shows how much pressure is created
-       by the relationship between loss, gain, time, and urgency.
-    */
+    // --- CORE VARIABLE ---
     const riskRewardTension =
-      (dailyLoss * (urgency / 10)) -
-      (gain > 0 ? gain / days * 0.25 : 0);
+      (expectedDailyLoss - dailyGain) * (urgency / 10);
 
-    let interpretation = "";
+    let narrative = "";
 
-    if (riskRewardTension < 0) {
-      interpretation = `
-What this suggests:
+    if (experienced > 0 && potentialLoss === 0) {
+      narrative = `
+You are reacting to a loss that has already happened.
 
-While a potential loss exists, the possible upside plays a significant role here.
-
-The pressure you feel may be less about time running out
-and more about uncertainty around how the situation could resolve.
-
-This does not mean the decision is safe —
-it means urgency is not being structurally forced by time alone.
+There is no additional downside accumulating with time.
+Urgency here is likely driven by the emotional weight of the past loss,
+not by current exposure.
       `;
     }
-    else if (riskRewardTension < 150) {
-      interpretation = `
-What this suggests:
+    else if (riskRewardTension > 0 && expectedDailyLoss > dailyGain) {
+      narrative = `
+Time is actively increasing downside exposure faster than upside can compensate.
 
-This situation sits in a tension zone.
+Each additional day shifts the balance against you.
+In this case, urgency is structurally grounded in how the situation evolves over time.
+      `;
+    }
+    else if (riskRewardTension < 0 && dailyGain > expectedDailyLoss) {
+      narrative = `
+The potential upside offsets the expected downside on a daily basis.
 
-Both potential loss and potential gain matter,
-and time does influence the balance — but not in a way that forces immediate action.
-
-The pressure you feel is understandable,
-yet the situation itself is not collapsing day by day.
+Pressure may feel intense, but it is not being enforced by time itself.
+This suggests fear of loss or uncertainty may be amplifying urgency.
       `;
     }
     else {
-      interpretation = `
-What this suggests:
+      narrative = `
+This situation sits in a balanced zone.
 
-Here, time actively amplifies downside risk
-faster than potential upside can compensate for it.
-
-Each day of delay meaningfully shifts the balance of this decision.
-
-In this case, urgency is not only psychological —
-it reflects a real change in exposure over time.
+Neither loss nor gain dominates on a daily basis.
+Urgency is understandable, but not structurally forced by time.
       `;
     }
 
     const report = `
-Structural Snapshot
+STRUCTURAL SNAPSHOT
 
-Estimated daily downside (likelihood-adjusted):
-${dailyLoss.toFixed(2)} ${unit} per day
+Experienced loss (fact):
+${experienced.toFixed(2)} ${unit}
 
-Potential upside (if things go well):
-${gain.toFixed(2)} ${unit}
+Expected daily downside:
+${expectedDailyLoss.toFixed(2)} ${unit} per day
+
+Potential daily upside:
+${dailyGain.toFixed(2)} ${unit} per day
 
 Declared urgency:
 ${urgency} / 10
@@ -224,13 +200,23 @@ ${urgency} / 10
 Risk–reward tension:
 ${riskRewardTension.toFixed(2)}
 
-${interpretation.trim()}
+${narrative.trim()}
     `;
 
-    const out = document.getElementById("humanReport");
-    out.style.display = "block";
-    out.textContent = report;
+    humanReport.style.display = "block";
+    humanReport.textContent = report;
   }
+
+  // Bind elements
+  const statementInput = document.getElementById("statement");
+  const unitInput = document.getElementById("unit");
+  const experiencedLoss = document.getElementById("experiencedLoss");
+  const potentialLossInput = document.getElementById("potentialLoss");
+  const potentialGainInput = document.getElementById("potentialGain");
+  const likelihoodInput = document.getElementById("likelihood");
+  const daysInput = document.getElementById("days");
+  const urgencyInput = document.getElementById("urgency");
+  const humanReport = document.getElementById("humanReport");
 
   document
     .getElementById("runAuditBtn")
@@ -241,4 +227,3 @@ ${interpretation.trim()}
 
 </body>
 </html>
-
