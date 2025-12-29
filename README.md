@@ -65,8 +65,7 @@ full dynamic interpretation in plain language
 
 unlimited single-decision audits
 
-👉 Purchase access here:
-Stripe link: https://buy.stripe.com/8x23co4EMb120LObe24c800
+👉 Purchase access here: https://buy.stripe.com/00wcMY1sAc56gKM4PE4c801
 
 Access instructions are provided immediately after purchase.
 
