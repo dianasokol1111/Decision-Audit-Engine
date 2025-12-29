@@ -1,108 +1,105 @@
 (function () {
 
-  function num(v) {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : 0;
-  }
+  const num = v => Number.isFinite(+v) ? +v : 0;
 
   function runAudit() {
-    // --- REQUIRED INPUT ---
-    const statementEl = document.getElementById("statement");
-    if (!statementEl || !statementEl.value.trim()) {
+
+    const statement = document.getElementById("statement").value.trim();
+    if (!statement) {
       alert("Decision statement is required.");
       return;
     }
 
-    // --- USER INPUTS (ALL PERCEIVED, NOT FACTS) ---
     const unit = document.getElementById("unit").value || "units";
-    const assumedLoss = num(document.getElementById("assumedLoss").value);
-    const likelihood = num(document.getElementById("likelihood").value);
-    const days = Math.max(1, num(document.getElementById("delayDays").value));
+    const experienced = num(document.getElementById("experiencedLoss").value);
+    const potentialLoss = num(document.getElementById("potentialLoss").value);
+    const potentialGain = num(document.getElementById("potentialGain").value);
+    const likelihood = num(document.getElementById("likelihood").value) / 100;
+    const days = Math.max(1, num(document.getElementById("days").value));
     const urgency = num(document.getElementById("urgency").value);
 
-    // --- CORE NUMERIC STRUCTURE ---
-    const worstPerDay = assumedLoss / days;
-    const beliefPerDay = (assumedLoss * (likelihood / 100)) / days;
+    const expectedDailyLoss = (potentialLoss * likelihood) / days;
+    const dailyGain = potentialGain / days;
 
-    // --- KEY VARIABLE: PERCEIVED EXPOSURE ---
-    // combines daily loss + psychological pressure
-    const perceivedExposureScore = beliefPerDay * (urgency / 10);
+    // --- STRUCTURAL PROFILES ---
+    const hasExperiencedLoss = experienced > 0;
+    const downsideDominates = expectedDailyLoss > dailyGain * 1.1;
+    const upsideDominates = dailyGain > expectedDailyLoss * 1.1;
+    const balanced = !downsideDominates && !upsideDominates;
+    const highUrgency = urgency >= 8;
 
-    // --- HUMAN INTERPRETATION (DYNAMIC) ---
-    let interpretation = "";
+    // --- SNAPSHOT ---
+    const snapshot = `
+Experienced loss (fact):
+${experienced.toFixed(2)} ${unit}
 
-    if (perceivedExposureScore < 50) {
-      // 🟢 Low structural pressure
-      interpretation = `
-What this shows:
+Expected daily downside:
+${expectedDailyLoss.toFixed(2)} ${unit} per day
 
-A potential loss exists, but very little is actually changing from day to day.
-
-This means the pressure you feel is likely being driven more by the fear of loss
-than by time actively working against you.
-
-From a time perspective, you are not being forced into an immediate reaction.
-      `;
-    }
-    else if (perceivedExposureScore < 300) {
-      // 🟡 Moderate, mixed pressure
-      interpretation = `
-What this shows:
-
-Time does have an effect on this situation, but it does not escalate sharply.
-
-Delaying this decision carries a cost, but that cost accumulates gradually
-rather than forcing an immediate response.
-
-The pressure you feel is partly grounded in time, and partly amplified by perception.
-      `;
-    }
-    else {
-      // 🔴 High structural pressure
-      interpretation = `
-What this shows:
-
-Each additional day creates a meaningful change in your exposure.
-
-In this case, time is actively amplifying the potential loss,
-which means the pressure you feel is not just emotional or imagined.
-
-Delaying this decision has a real and increasing day-by-day cost.
-      `;
-    }
-
-    // --- FINAL HUMAN-READABLE REPORT ---
-    const report = `
-Structural Snapshot
-
-Daily worst-case change:
-${worstPerDay.toFixed(2)} ${unit} per day
-
-Daily change adjusted for likelihood:
-${beliefPerDay.toFixed(2)} ${unit} per day
+Potential daily upside:
+${dailyGain.toFixed(2)} ${unit} per day
 
 Declared urgency:
 ${urgency} / 10
+    `.trim();
 
-${interpretation.trim()}
+    // --- DECISION NOTE (COMPOSED) ---
+    let note = "";
+
+    if (hasExperiencedLoss) {
+      note += `
+A significant financial loss has already occurred.
+This does not change the economics of the current decision,
+but it materially affects the conditions under which it is being made.
+      `;
+    }
+
+    if (downsideDominates) {
+      note += `
+At present, downside exposure increases faster than potential upside.
+Each additional day shifts the balance further against you.
+Time is structurally working on the risk side of this situation.
+      `;
+    }
+    else if (upsideDominates) {
+      note += `
+Potential upside compensates expected downside on a daily basis.
+Time is not enforcing a deterioration of this decision.
+      `;
+    }
+    else if (balanced) {
+      note += `
+Downside and upside remain closely balanced over time.
+The situation does not structurally deteriorate with delay.
+      `;
+    }
+
+    if (highUrgency && !downsideDominates) {
+      note += `
+Declared urgency is high relative to how the situation evolves over time.
+This suggests that part of the pressure may not be structurally enforced by time.
+      `;
+    }
+    else if (highUrgency && downsideDominates) {
+      note += `
+Declared urgency is consistent with how risk accumulates over time.
+Pressure in this case is structurally grounded.
+      `;
+    }
+
+    note += `
+In situations like this, decision quality is often improved
+by reducing exposure or irreversibility before committing to direction.
     `;
 
     // --- OUTPUT ---
-    const out = document.getElementById("humanReport");
-    out.style.display = "block";
-    out.innerText = report;
+    document.getElementById("snapshot").textContent = snapshot;
+    document.getElementById("decisionNote").textContent = note.trim();
+    document.getElementById("output").style.display = "block";
   }
 
-  // --- SAFE EVENT BINDING ---
-  document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("runAuditBtn");
-    if (btn) {
-      btn.addEventListener("click", runAudit);
-    } else {
-      console.error("Run Structural Audit button not found.");
-    }
-  });
+  document
+    .getElementById("runAuditBtn")
+    .addEventListener("click", runAudit);
 
 })();
-
-
